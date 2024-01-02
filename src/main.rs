@@ -5,12 +5,13 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use std::time::Duration;
-
+mod system;
+use system::player::{Direction, Keys, Renderable};
 pub fn main() -> Result<(), String> {
 
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
-    let mut system = System::new( 600, 800, 1.0);
+    let mut system = system::System::new( 600, 800, 1.0);
 
     let window = video_subsystem
         .window("better_launcher", 800, 600)
@@ -124,89 +125,4 @@ fn launch(app: &str, args: &[&str]) {
     cmd.args(args);
     cmd.output().expect("Failed to launch");
 }
-struct Player{
-   position: Position,
-    momentum: Position,
-    speed_x: f32,
-}
-#[derive(Copy, Clone)]
-struct Position{
-    x: f32,
-    y: f32,
-}
-impl Player{
-    fn new(x: usize, y: usize, speed_x : f32) -> Player{
-        Player{
-            position: Position{x: x as f32, y: y as f32},
-            momentum : Position{x: 0.0, y: 0.0},
-            speed_x: speed_x,
 
-        }
-    }
-    fn move_player(&mut self, direction: Direction){
-        match direction{
-            Direction::Left => self.momentum.x -= self.speed_x,
-            Direction::Right => self.momentum.x += self.speed_x,
-            _ => {},
-        }
-    }
-}
-enum Direction{
-    Up,
-    Down,
-    Left,
-    Right,
-}
-#[derive(PartialEq)]
-enum CollisionType{
-    Solid,
-    None
-}
-struct Keys{
-    up: bool,
-    down: bool,
-    left: bool,
-    right: bool,
-}
-impl Renderable for Player{
-
-    fn render(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) -> Result<(), String>{
-        canvas.set_draw_color(Color::RGB(0, 0, 0));
-        canvas.fill_rect(sdl2::rect::Rect::new(self.position.x as i32, self.position.y as i32, 50, 50))?;
-        Ok(())
-    }
-}
-trait Renderable{
-    fn render(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) -> Result<(), String>;
-}
-
-struct System{
-    player: Player,
-    screen_width: u32,
-    screen_height: u32,
-}
-impl System{
-    fn check_collision(&self, position : Position, momentum : Position) -> CollisionType{
-        CollisionType::None
-    }
-
-    fn new(screen_height :u32, screen_width: u32, speed_x: f32) -> System{
-
-
-        System{
-            player: Player::new(0, 0, speed_x),
-            screen_width: screen_width,
-            screen_height: screen_height,
-        }
-    }
-    fn update(&mut self){
-        let collision_type = self.check_collision(self.player.position, self.player.momentum);
-        if collision_type == CollisionType::None{
-            self.player.position.x += self.player.momentum.x;
-            self.player.position.y += self.player.momentum.y;
-        }
-    }
-
-
-
-}
