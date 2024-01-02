@@ -6,12 +6,11 @@ use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use std::time::Duration;
 mod system;
-use system::player::{Direction, Keys, Renderable};
+use system::{player::{Direction, Keys}, Renderable};
 pub fn main() -> Result<(), String> {
 
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
-    let mut system = system::System::new( 600, 800, 1.0);
 
     let window = video_subsystem
         .window("better_launcher", 800, 600)
@@ -22,15 +21,15 @@ pub fn main() -> Result<(), String> {
 
     let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
 
-    canvas.set_draw_color(Color::RGB(255, 0, 0));
-    canvas.clear();
-    canvas.present();
+    let mut system = system::System::new( 600, 800, 1.0, canvas);
+
     let mut event_pump = sdl_context.event_pump()?;
     let mut held_down_keys = Keys{
         up: false,
         down: false,
         left: false,
         right: false,
+        space: false,
     };
 
 
@@ -91,6 +90,18 @@ pub fn main() -> Result<(), String> {
                 } => {
                     held_down_keys.right = false;
                 }
+                Event::KeyDown {
+                    keycode: Some(Keycode::Space),
+                    ..
+                } => {
+                    held_down_keys.space = true;
+                }
+                Event::KeyUp {
+                    keycode: Some(Keycode::Space),
+                    ..
+                } => {
+                    held_down_keys.space = false;
+                }
 
                 _ => {}
             }
@@ -108,11 +119,10 @@ pub fn main() -> Result<(), String> {
         if held_down_keys.right{
             system.player.move_player(Direction::Right);
         }
-        canvas.clear();
+        if held_down_keys.space{
+            system.player.move_player(Direction::Up);
+        }
         system.update();
-        system.player.render(&mut canvas)?;
-        canvas.set_draw_color(Color::RGB(255, 0, 0));
-        canvas.present();
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
         // The rest of the game loop goes here...
     }
