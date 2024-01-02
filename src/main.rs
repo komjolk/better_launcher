@@ -113,7 +113,7 @@ pub fn main() -> Result<(), String> {
         system.player.render(&mut canvas)?;
         canvas.set_draw_color(Color::RGB(255, 0, 0));
         canvas.present();
-        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30));
+        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
         // The rest of the game loop goes here...
     }
 
