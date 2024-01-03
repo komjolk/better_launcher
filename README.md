@@ -20,7 +20,7 @@ The config file is in JSON format with three objects:
             "command": [
                 "ls", "-A"
             ],
-            "color" : "blue"
+            "color" : [0,0,255]
         }
     ],
     "player": {
@@ -31,12 +31,12 @@ The config file is in JSON format with three objects:
         "speed": 10,
         "jump_speed": 10,
         "gravity": 0.3,
-        "color": "red"
+        "color": "[255,0,0]
     },
     "screen": {
         "w": 1000,
         "h": 1000,
-        "color" : "black"
+        "color"  [0,0,0]
     }
 }
 ```
@@ -46,7 +46,7 @@ Blocks stores all blocks in a list where x,y is the position of the top, and the
 
 Player is the moveable object where x,y is the start position of the top right corner. Speed is in acceleration where 1 is an acceleration of 1 pixel every 1/60th of a second same with gravity and jump_speed
 
-Screen stores the data for the screen with w and h as width and height and color being the background color
+Screen stores the data for the screen with w and h as width and height and color being the background color in rgb
 
 ## to do 
 * Add support for pictures
