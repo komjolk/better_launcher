@@ -1,11 +1,12 @@
-use sdl2::pixels::Color;
 use super::{Renderable, Sprite};
+use sdl2::pixels::Color;
 pub struct Player {
     pub momentum: Position,
     pub sprite: Sprite,
     speed_x: f32,
     gravity: f32,
     jump_speed: f32,
+    can_jump: bool,
 }
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct Position {
@@ -28,9 +29,31 @@ impl Player {
             speed_x: speed_x,
             gravity,
             jump_speed,
-
+            can_jump: false,
         }
     }
+
+    pub fn collision(&mut self, collision_type: CollisionType) {
+        match collision_type {
+            CollisionType::Solid(pos) => {
+                if self.sprite.position.x + self.momentum.x != pos.x {
+                    self.momentum.x = 0.0;
+                }
+                if self.sprite.position.y + self.momentum.y != pos.y {
+                    if self.momentum.y > 0.0 {
+                        self.can_jump = true;
+                    }
+                    self.momentum.y = 0.0;
+                }
+                self.sprite.position = pos;
+            }
+            CollisionType::None => {
+                self.sprite.position.x += self.momentum.x;
+                self.sprite.position.y += self.momentum.y;
+            }
+        }
+    }
+
     pub fn gravity(&mut self) {
         self.momentum.y += self.gravity;
     }
@@ -38,7 +61,12 @@ impl Player {
         match direction {
             Direction::Left => self.momentum.x -= self.speed_x,
             Direction::Right => self.momentum.x += self.speed_x,
-            Direction::Up => self.momentum.y -= self.jump_speed,
+            Direction::Up => {
+                if self.can_jump {
+                    self.momentum.y -= self.jump_speed;
+                    self.can_jump = false;
+                }
+            }
             _ => {}
         }
     }
@@ -56,7 +84,6 @@ impl Renderable for Player {
         Ok(())
     }
 }
-
 
 pub enum Direction {
     Up,

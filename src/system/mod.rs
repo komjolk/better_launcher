@@ -1,9 +1,10 @@
 pub mod player;
+
 use player::{CollisionType, Player, Position};
 use sdl2::{pixels::Color, render::Canvas, video::Window};
 mod block;
 use block::Block;
-
+use super::launch;
 pub(crate) struct System {
     pub player: Player,
     screen_width: u32,
@@ -40,12 +41,14 @@ impl System {
             new_pos.y = self.screen_height as f32 - sprite.h as f32;
         }
         for block in &self.blocks {
+            let mut has_collision = false;
             if new_pos.x + sprite.w as f32 > block.sprite.position.x
                 && new_pos.x < block.sprite.position.x + block.sprite.w as f32
             {
                 if sprite.position.y + sprite.h as f32 > block.sprite.position.y
                     && sprite.position.y < block.sprite.position.y + block.sprite.h as f32
                 {
+                    has_collision = true;
                     if momentum.x > 0.0 {
                         new_pos.x = block.sprite.position.x - sprite.w as f32;
                     } else if momentum.x < 0.0 {
@@ -59,12 +62,16 @@ impl System {
                 if sprite.position.x + sprite.w as f32 > block.sprite.position.x
                     && sprite.position.x < block.sprite.position.x + block.sprite.w as f32
                 {
+                    has_collision = true;
                     if momentum.y > 0.0 {
                         new_pos.y = block.sprite.position.y - sprite.h as f32;
                     } else if momentum.y < 0.0 {
                         new_pos.y = block.sprite.position.y + block.sprite.h as f32;
                     }
                 }
+            }
+            if has_collision {
+                (block.collision_fn)();
             }
         }
         if new_pos.x != sprite.position.x + momentum.x
@@ -79,38 +86,30 @@ impl System {
     }
 
     pub fn new(
-        screen_height: u32,
-        screen_width: u32,
-        speed_x: f32,
+        config : crate::config::Config,
         canvas: Canvas<Window>,
     ) -> System {
+        // Create a vector of references to strings
+
+        let mut blocks = vec![];
+        for block in config.blocks {
+        let block = Block::new(block.x, block.y, block.w, block.h, Some(Box::new(move || {launch(Box::new(block.command.clone()))})));
+            blocks.push(block);
+        }
         System {
-            player: Player::new(0, 0, speed_x, 0.1, 1.0),
-            screen_width,
-            screen_height,
-            blocks: vec![Block::new(0, 100, 50, 50), Block::new(150, 150, 50, 50)],
+            player: Player::new(config.player.x, config.player.y as usize, config.player.speed, config.player.gravity, config.player.jump_speed),
+            screen_width: config.screen.w,
+            screen_height : config.screen.h,
+            blocks,
             canvas,
         }
+
     }
     pub fn update(&mut self) {
         self.canvas.clear();
         self.player.gravity();
-        let collision_type = self.check_collision(self.player.sprite, self.player.momentum);
-        match collision_type {
-            CollisionType::Solid(pos) => {
-                if self.player.sprite.position.x + self.player.momentum.x != pos.x {
-                    self.player.momentum.x = 0.0;
-                }
-                if self.player.sprite.position.y + self.player.momentum.y != pos.y {
-                    self.player.momentum.y = 0.0;
-                }
-                self.player.sprite.position = pos;
-            }
-            CollisionType::None => {
-                self.player.sprite.position.x += self.player.momentum.x;
-                self.player.sprite.position.y += self.player.momentum.y;
-            }
-        }
+        self.player.collision(self.check_collision(self.player.sprite, self.player.momentum));
+
         self.player.render(&mut self.canvas).expect("RENDER_ERR");
         for block in &self.blocks {
             block.render(&mut self.canvas).expect("RENDER_ERR");

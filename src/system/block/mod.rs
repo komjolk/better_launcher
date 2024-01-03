@@ -2,9 +2,9 @@ use sdl2::pixels::Color;
 
 use super::{Renderable, Sprite, player::Position};
 
-
 pub struct Block {
     pub sprite: Sprite,
+    pub collision_fn: Box<dyn Fn() -> ()>,
 }
 impl Renderable for Block{
     fn render(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) -> Result<(), String> {
@@ -19,7 +19,11 @@ impl Renderable for Block{
     }
 }
 impl Block{
-    pub fn new (x: usize, y: usize, w :i32,h:i32) -> Block{
+    pub fn new (x: usize, y: usize, w :i32,h:i32, collision_fn : Option<Box<dyn Fn() -> ()>> ) -> Block{
+        let collision_fn = match collision_fn {
+            Some(f) => f,
+            None => Box::new(||{})
+        };
         Block{
             sprite: Sprite{
                 position: Position{
@@ -29,7 +33,8 @@ impl Block{
                 color: Color::RGB(0, 0, 255),
                 w,
                 h
-            }
+            },
+            collision_fn
         }
     }
     

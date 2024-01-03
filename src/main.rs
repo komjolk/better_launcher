@@ -1,37 +1,42 @@
-use std::process::Command;
+use std::{process::Command, env};
 extern crate sdl2;
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use sdl2::pixels::Color;
 use std::time::Duration;
 mod system;
-use system::{player::{Direction, Keys}, Renderable};
-pub fn main() -> Result<(), String> {
+mod config;
+use system::player::{Direction, Keys, CollisionType};
+use crate::config::{read_config};
 
+pub fn main() -> Result<(), String> {
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        return Err("No config file specified".to_string());
+    }
+    let config = read_config("args[1]")?;
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
 
     let window = video_subsystem
-        .window("better_launcher", 800, 600)
+        .window("better_launcher", config.screen.w, config.screen.h)
         .position_centered()
         .opengl()
         .build()
         .map_err(|e| e.to_string())?;
 
-    let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
+    let canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
 
-    let mut system = system::System::new( 600, 800, 1.0, canvas);
+    let mut system = system::System::new(config, canvas);
 
     let mut event_pump = sdl_context.event_pump()?;
-    let mut held_down_keys = Keys{
+    let mut held_down_keys = Keys {
         up: false,
         down: false,
         left: false,
         right: false,
         space: false,
     };
-
 
     'running: loop {
         for event in event_pump.poll_iter() {
@@ -45,8 +50,7 @@ pub fn main() -> Result<(), String> {
                     keycode: Some(Keycode::W),
                     ..
                 } => {
-
-                        held_down_keys.up = true;
+                    held_down_keys.up = true;
                 }
                 Event::KeyUp {
                     keycode: Some(Keycode::W),
@@ -107,19 +111,19 @@ pub fn main() -> Result<(), String> {
             }
         }
 
-        if held_down_keys.up{
+        if held_down_keys.up {
             system.player.move_player(Direction::Up);
         }
-        if held_down_keys.down{
+        if held_down_keys.down {
             system.player.move_player(Direction::Down);
         }
-        if held_down_keys.left{
+        if held_down_keys.left {
             system.player.move_player(Direction::Left);
         }
-        if held_down_keys.right{
+        if held_down_keys.right {
             system.player.move_player(Direction::Right);
         }
-        if held_down_keys.space{
+        if held_down_keys.space {
             system.player.move_player(Direction::Up);
         }
         system.update();
@@ -129,10 +133,12 @@ pub fn main() -> Result<(), String> {
 
     Ok(())
 }
-#[allow(dead_code)]
-fn launch(app: &str, args: &[&str]) {
-    let mut cmd = Command::new(app);
-    cmd.args(args);
-    cmd.output().expect("Failed to launch");
+fn launch(args: Box<Vec<String>>) {
+    if args.len() == 0 {
+        return;
+    }
+    println!("Launching {:?}", args);
+    let mut cmd = Command::new(&args[0]);
+    cmd.args(& args[1..]);
+    cmd.spawn().expect("Failed to launch");
 }
-
