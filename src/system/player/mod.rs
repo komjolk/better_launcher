@@ -14,14 +14,14 @@ pub struct Position {
     pub y: f32,
 }
 impl Player {
-    pub fn new(x: usize, y: usize, speed_x: f32, gravity: f32, jump_speed: f32) -> Player {
+    pub fn new(x: usize, y: usize, speed_x: f32, gravity: f32, jump_speed: f32, color: Color) -> Player {
         Player {
             sprite: Sprite {
                 position: Position {
                     x: x as f32,
                     y: y as f32,
                 },
-                color: Color::RGB(0, 0, 0),
+                color,
                 w: 50,
                 h: 50,
             },

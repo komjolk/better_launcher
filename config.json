@@ -6,8 +6,9 @@
             "w": 100,
             "h": 100,
             "command": [
-                "ls"
-            ]
+                "ls", "-A"
+            ],
+            "color" : [0,0,255]
         }
     ],
     "player": {
@@ -18,10 +19,11 @@
         "speed": 10,
         "jump_speed": 10,
         "gravity": 0.3,
-        "color": "red"
+        "color": [255,0,0]
     },
     "screen": {
         "w": 1000,
-        "h": 1000
+        "h": 1000,
+        "color" :  [0,0,0]
     }
 }

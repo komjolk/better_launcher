@@ -11,6 +11,7 @@ pub(crate) struct System {
     screen_height: u32,
     pub blocks: Vec<Block>,
     canvas: sdl2::render::Canvas<sdl2::video::Window>,
+    color : Color
 }
 
 #[derive(Copy, Clone)]
@@ -93,15 +94,16 @@ impl System {
 
         let mut blocks = vec![];
         for block in config.blocks {
-        let block = Block::new(block.x, block.y, block.w, block.h, Some(Box::new(move || {launch(Box::new(block.command.clone()))})));
+        let block = Block::new(block.x, block.y, block.w, block.h, rgb_to_color(block.color),Some(Box::new(move || {launch(Box::new(block.command.clone()))})));
             blocks.push(block);
         }
         System {
-            player: Player::new(config.player.x, config.player.y as usize, config.player.speed, config.player.gravity, config.player.jump_speed),
+            player: Player::new(config.player.x, config.player.y as usize, config.player.speed, config.player.gravity, config.player.jump_speed, rgb_to_color(config.player.color)),
             screen_width: config.screen.w,
             screen_height : config.screen.h,
             blocks,
             canvas,
+            color : rgb_to_color(config.screen.color)
         }
 
     }
@@ -114,7 +116,11 @@ impl System {
         for block in &self.blocks {
             block.render(&mut self.canvas).expect("RENDER_ERR");
         }
-        self.canvas.set_draw_color(Color::RGB(255, 0, 0));
+        self.canvas.set_draw_color(self.color);
         self.canvas.present();
     }
+}
+
+fn rgb_to_color(color: [u8; 3]) -> Color {
+    Color::RGB(color[0], color[1], color[2])
 }

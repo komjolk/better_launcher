@@ -19,7 +19,7 @@ impl Renderable for Block{
     }
 }
 impl Block{
-    pub fn new (x: usize, y: usize, w :i32,h:i32, collision_fn : Option<Box<dyn Fn() -> ()>> ) -> Block{
+    pub fn new (x: usize, y: usize, w :i32,h:i32, color: Color, collision_fn : Option<Box<dyn Fn() -> ()>> ) -> Block{
         let collision_fn = match collision_fn {
             Some(f) => f,
             None => Box::new(||{})
@@ -30,7 +30,7 @@ impl Block{
                     x: x as f32,
                     y: y as f32,
                 },
-                color: Color::RGB(0, 0, 255),
+                color,
                 w,
                 h
             },

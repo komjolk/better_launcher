@@ -36,7 +36,7 @@ The config file is in JSON format with three objects:
     "screen": {
         "w": 1000,
         "h": 1000,
-        "color"  [0,0,0]
+        "color" : [0,0,0]
     }
 }
 ```

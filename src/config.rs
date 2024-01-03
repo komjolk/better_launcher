@@ -14,6 +14,7 @@ pub struct BlockConfig {
     pub w: i32,
     pub h: i32,
     pub command: Vec<String>,
+    pub color : [u8;3]
 }
 #[derive(serde::Deserialize, Debug)]
 pub struct PlayerConfig {
@@ -24,11 +25,13 @@ pub struct PlayerConfig {
     pub speed: f32,
     pub gravity: f32,
     pub jump_speed: f32,
+    pub color : [u8;3]
 }
 #[derive(serde::Deserialize, Debug)]
 pub struct ScreenConfig {
     pub w: u32,
     pub h: u32,
+    pub color : [u8;3]
 }
 
 pub fn read_config(path: &str) -> Result<Config, String> {
