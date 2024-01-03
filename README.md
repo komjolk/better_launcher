@@ -7,7 +7,9 @@ A better way to open your apps, by using a Mario-like game
 
 ## how to config
 The config file is in JSON format with three objects:
-...
+```
+
+
 {
     "blocks": [
         {
@@ -37,7 +39,9 @@ The config file is in JSON format with three objects:
         "color" : "black"
     }
 }
-...
+```
+
+
 Blocks stores all blocks in a list where x,y is the position of the top, and the right corner and h, w are height and width respectively. Command is a list of strings where the first string is the command to run and the rest are optional commands
 
 Player is the moveable object where x,y is the start position of the top right corner. Speed is in acceleration where 1 is an acceleration of 1 pixel every 1/60th of a second same with gravity and jump_speed
