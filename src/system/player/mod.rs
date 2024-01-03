@@ -7,7 +7,7 @@ pub struct Player {
     gravity: f32,
     jump_speed: f32,
 }
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 pub struct Position {
     pub x: f32,
     pub y: f32,
