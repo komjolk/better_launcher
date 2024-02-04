@@ -36,8 +36,7 @@ pub struct ScreenConfig {
 
 pub fn read_config(path: &str) -> Result<Config, String> {
         // Open the file in read mode
-        let file_path = "config.json"; // Replace with your file path
-        let mut file = File::open(file_path).expect("File not found");
+        let mut file = File::open(path).expect("File not found");
     
         // Read the file content into a String
         let mut contents = String::new();

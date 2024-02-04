@@ -6,15 +6,15 @@ use sdl2::keyboard::Keycode;
 use std::time::Duration;
 mod system;
 mod config;
-use system::player::{Direction, Keys, CollisionType};
-use crate::config::{read_config};
+use system::player::{Direction, Keys};
+use crate::config::read_config;
 
 pub fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
         return Err("No config file specified".to_string());
     }
-    let config = read_config("args[1]")?;
+    let config = read_config(&args[1])?;
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
 
