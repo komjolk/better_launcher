@@ -16,10 +16,11 @@
         "y": 900,
         "w": 100,
         "h": 100,
-        "speed": 10,
+        "speed": 5,
         "jump_speed": 10,
         "gravity": 0.3,
-        "color": [255,0,0]
+        "color": [255,0,0],
+        "friction": 1
     },
     "screen": {
         "w": 1000,

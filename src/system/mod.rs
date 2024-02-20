@@ -26,7 +26,7 @@ pub trait Renderable {
 }
 
 impl System {
-    fn check_collision(&self, sprite: Sprite, momentum: Position) -> CollisionType {
+    fn check_collision(&mut self, sprite: Sprite, momentum: Position) -> CollisionType {
         let mut new_pos = Position {
             x: sprite.position.x + momentum.x,
             y: sprite.position.y + momentum.y,
@@ -41,7 +41,7 @@ impl System {
         } else if new_pos.y + sprite.h as f32 > self.screen_height as f32 {
             new_pos.y = self.screen_height as f32 - sprite.h as f32;
         }
-        for block in &self.blocks {
+        for block in self.blocks.iter_mut() {
             let mut has_collision = false;
             if new_pos.x + sprite.w as f32 > block.sprite.position.x
                 && new_pos.x < block.sprite.position.x + block.sprite.w as f32
@@ -71,8 +71,9 @@ impl System {
                     }
                 }
             }
-            if has_collision {
-                (block.collision_fn)();
+          // could preduce a wrong collision if player hits the block from the side while going up
+            if has_collision &&  sprite.position.y > block.sprite.position.y + block.sprite.w as f32  && block.sprite.position.y + block.sprite.w as f32 > sprite.position.y + momentum.y {
+                block.collision();
             }
         }
         if new_pos.x != sprite.position.x + momentum.x
@@ -98,7 +99,7 @@ impl System {
             blocks.push(block);
         }
         System {
-            player: Player::new(config.player.x, config.player.y as usize, config.player.speed, config.player.gravity, config.player.jump_speed, rgb_to_color(config.player.color)),
+            player: Player::new(config.player.x, config.player.y as usize, config.player.speed, config.player.gravity, config.player.jump_speed, rgb_to_color(config.player.color), config.player.friction),
             screen_width: config.screen.w,
             screen_height : config.screen.h,
             blocks,
@@ -110,7 +111,11 @@ impl System {
     pub fn update(&mut self) {
         self.canvas.clear();
         self.player.gravity();
-        self.player.collision(self.check_collision(self.player.sprite, self.player.momentum));
+        let collision_type = self.check_collision(self.player.sprite, self.player.momentum);
+        self.player.collision(collision_type);
+        for  block in self.blocks.iter_mut() {
+            block.update();
+        }
 
         self.player.render(&mut self.canvas).expect("RENDER_ERR");
         for block in &self.blocks {

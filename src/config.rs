@@ -25,7 +25,8 @@ pub struct PlayerConfig {
     pub speed: f32,
     pub gravity: f32,
     pub jump_speed: f32,
-    pub color : [u8;3]
+    pub color : [u8;3],
+    pub friction: f32
 }
 #[derive(serde::Deserialize, Debug)]
 pub struct ScreenConfig {

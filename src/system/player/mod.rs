@@ -7,6 +7,7 @@ pub struct Player {
     gravity: f32,
     jump_speed: f32,
     can_jump: bool,
+    friction: f32,
 }
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct Position {
@@ -14,7 +15,7 @@ pub struct Position {
     pub y: f32,
 }
 impl Player {
-    pub fn new(x: usize, y: usize, speed_x: f32, gravity: f32, jump_speed: f32, color: Color) -> Player {
+    pub fn new(x: usize, y: usize, speed_x: f32, gravity: f32, jump_speed: f32, color: Color, friction : f32) -> Player {
         Player {
             sprite: Sprite {
                 position: Position {
@@ -30,6 +31,7 @@ impl Player {
             gravity,
             jump_speed,
             can_jump: false,
+            friction: friction,
         }
     }
 
@@ -56,6 +58,20 @@ impl Player {
 
     pub fn gravity(&mut self) {
         self.momentum.y += self.gravity;
+
+        // friction could be counted as gravity
+        // could actually be multipled by the momentum
+        if self.momentum.x > 0.0 && self.momentum.x - self.friction > 0.0{
+            self.momentum.x -= self.friction;
+        } else if self.momentum.x > 0.0{
+            self.momentum.x = 0.0;
+        } 
+        else if self.momentum.x < 0.0 && self.momentum.x + self.friction < 0.0{
+            self.momentum.x += self.friction;
+        } else if self.momentum.x < 0.0{
+            self.momentum.x = 0.0;
+        
+        }
     }
     pub fn move_player(&mut self, direction: Direction) {
         match direction {
