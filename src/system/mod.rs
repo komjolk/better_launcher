@@ -1,17 +1,19 @@
 pub mod player;
 
+use std::sync::Arc;
+
 use player::{CollisionType, Player, Position};
-use sdl2::{pixels::Color, render::Canvas, video::Window};
+use sdl2::{image::LoadTexture, pixels::Color, render::Canvas, video::Window};
 mod block;
-use block::Block;
 use super::launch;
+use block::Block;
 pub(crate) struct System {
     pub player: Player,
     screen_width: u32,
     screen_height: u32,
     pub blocks: Vec<Block>,
     canvas: sdl2::render::Canvas<sdl2::video::Window>,
-    color : Color
+    color: Color,
 }
 
 #[derive(Copy, Clone)]
@@ -71,8 +73,11 @@ impl System {
                     }
                 }
             }
-          // could preduce a wrong collision if player hits the block from the side while going up
-            if has_collision &&  sprite.position.y > block.sprite.position.y + block.sprite.w as f32  && block.sprite.position.y + block.sprite.w as f32 > sprite.position.y + momentum.y {
+            // could preduce a wrong collision if player hits the block from the side while going up
+            if has_collision
+                && sprite.position.y > block.sprite.position.y + block.sprite.w as f32
+                && block.sprite.position.y + block.sprite.w as f32 > sprite.position.y + momentum.y
+            {
                 block.collision();
             }
         }
@@ -87,33 +92,44 @@ impl System {
         CollisionType::None
     }
 
-    pub fn new(
-        config : crate::config::Config,
-        canvas: Canvas<Window>,
-    ) -> System {
+    pub fn new(config: crate::config::Config, mut canvas: Canvas<Window>) -> System {
         // Create a vector of references to strings
-
         let mut blocks = vec![];
         for block in config.blocks {
-        let block = Block::new(block.x, block.y, block.w, block.h, rgb_to_color(block.color),Some(Box::new(move || {launch(Box::new(block.command.clone()))})));
+            let block = Block::new(
+                block.x,
+                block.y,
+                block.w,
+                block.h,
+                rgb_to_color(block.color),
+                Some(Box::new(move || launch(Box::new(block.command.clone())))),
+            );
             blocks.push(block);
         }
         System {
-            player: Player::new(config.player.x, config.player.y as usize, config.player.speed, config.player.gravity, config.player.jump_speed, rgb_to_color(config.player.color), config.player.friction),
+            player: Player::new(
+                config.player.x,
+                config.player.y as usize,
+                config.player.speed,
+                config.player.gravity,
+                config.player.jump_speed,
+                rgb_to_color(config.player.color),
+                config.player.friction,
+                config.player.image,
+            ),
             screen_width: config.screen.w,
-            screen_height : config.screen.h,
+            screen_height: config.screen.h,
             blocks,
             canvas,
-            color : rgb_to_color(config.screen.color)
+            color: rgb_to_color(config.screen.color),
         }
-
     }
     pub fn update(&mut self) {
         self.canvas.clear();
         self.player.gravity();
         let collision_type = self.check_collision(self.player.sprite, self.player.momentum);
         self.player.collision(collision_type);
-        for  block in self.blocks.iter_mut() {
+        for block in self.blocks.iter_mut() {
             block.update();
         }
 

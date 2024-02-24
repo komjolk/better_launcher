@@ -20,7 +20,8 @@
         "jump_speed": 10,
         "gravity": 0.3,
         "color": [255,0,0],
-        "friction": 1
+        "friction": 1,
+        "image": "player.png"
     },
     "screen": {
         "w": 1000,

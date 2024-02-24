@@ -8,6 +8,7 @@
       llvmPackages.bintools
       rustup
       SDL2
+      SDL2_image
     ];
     RUSTC_VERSION = pkgs.lib.readFile ./rust-toolchain;
     # https://github.com/rust-lang/rust-bindgen#environment-variables
