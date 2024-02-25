@@ -1,9 +1,7 @@
 pub mod player;
 
-use std::sync::Arc;
-
 use player::{CollisionType, Player, Position};
-use sdl2::{image::LoadTexture, pixels::Color, render::Canvas, video::Window};
+use sdl2::{pixels::Color, render::Canvas, video::Window};
 mod block;
 use super::launch;
 use block::Block;
@@ -92,7 +90,7 @@ impl System {
         CollisionType::None
     }
 
-    pub fn new(config: crate::config::Config, mut canvas: Canvas<Window>) -> System {
+    pub fn new(config: crate::config::Config, canvas: Canvas<Window>) -> System {
         // Create a vector of references to strings
         let mut blocks = vec![];
         for block in config.blocks {

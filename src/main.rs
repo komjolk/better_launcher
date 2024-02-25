@@ -1,14 +1,13 @@
-use std::{process::Command, env};
+use std::{env, process::Command};
 extern crate sdl2;
 
-use sdl2::{event::Event, image::LoadTexture};
+use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use std::time::Duration;
-mod system;
 mod config;
-use system::player::{Direction, Keys};
+mod system;
 use crate::config::read_config;
-use std::sync::Arc;
+use system::player::{Direction, Keys};
 
 pub fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().collect();
@@ -26,9 +25,9 @@ pub fn main() -> Result<(), String> {
         .build()
         .map_err(|e| e.to_string())?;
 
-    let canvas: sdl2::render::Canvas<sdl2::video::Window> = window.into_canvas().build().map_err(|e| e.to_string())?;
+    let canvas: sdl2::render::Canvas<sdl2::video::Window> =
+        window.into_canvas().build().map_err(|e| e.to_string())?;
 
-    
     let mut system = system::System::new(config, canvas);
 
     let mut event_pump = sdl_context.event_pump()?;
@@ -141,6 +140,6 @@ fn launch(args: Box<Vec<String>>) {
     }
     println!("Launching {:?}", args);
     let mut cmd = Command::new(&args[0]);
-    cmd.args(& args[1..]);
+    cmd.args(&args[1..]);
     cmd.spawn().expect("Failed to launch");
 }
