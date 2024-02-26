@@ -1,8 +1,7 @@
 use super::{Renderable, Sprite};
-use sdl2::image::LoadTexture;
 use sdl2::pixels::Color;
 
-pub struct Player {
+pub struct Player<'a> {
     pub momentum: Position,
     pub sprite: Sprite,
     speed_x: f32,
@@ -10,14 +9,14 @@ pub struct Player {
     jump_speed: f32,
     can_jump: bool,
     friction: f32,
-    image: String,
+    texture:  Result<sdl2::render::Texture<'a>, String>,
 }
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct Position {
     pub x: f32,
     pub y: f32,
 }
-impl Player {
+impl Player<'_> {
     pub fn new(
         x: usize,
         y: usize,
@@ -26,7 +25,7 @@ impl Player {
         jump_speed: f32,
         color: Color,
         friction: f32,
-        image: String,
+        texture:  Result<sdl2::render::Texture, String>,
     ) -> Player {
         Player {
             sprite: Sprite {
@@ -44,7 +43,7 @@ impl Player {
             jump_speed,
             can_jump: false,
             friction,
-            image,
+            texture,
         }
     }
 
@@ -99,13 +98,11 @@ impl Player {
     }
 }
 
-impl Renderable for Player {
+impl Renderable for Player<'_> {
     fn render(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) -> Result<(), String> {
-        let texture_creator = canvas.texture_creator();
-        let texture: Result<sdl2::render::Texture<'_>, String> =
-            texture_creator.load_texture(self.image.as_str());
 
-        match texture {
+
+        match &self.texture {
             Ok(texture) => canvas.copy(
                 &texture,
                 None,
@@ -116,7 +113,7 @@ impl Renderable for Player {
                     self.sprite.h as u32,
                 ),
             )?,
-            _ => {
+            Err(_) => {
                 canvas.set_draw_color(self.sprite.color);
                 canvas.fill_rect(sdl2::rect::Rect::new(
                     self.sprite.position.x as i32,

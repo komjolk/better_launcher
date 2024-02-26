@@ -5,8 +5,8 @@ use sdl2::{pixels::Color, render::Canvas, video::Window};
 mod block;
 use super::launch;
 use block::Block;
-pub(crate) struct System {
-    pub player: Player,
+pub(crate) struct System<'a> {
+    pub player: Player<'a>,
     screen_width: u32,
     screen_height: u32,
     pub blocks: Vec<Block>,
@@ -25,7 +25,7 @@ pub trait Renderable {
     fn render(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) -> Result<(), String>;
 }
 
-impl System {
+impl System<'_> {
     fn check_collision(&mut self, sprite: Sprite, momentum: Position) -> CollisionType {
         let mut new_pos = Position {
             x: sprite.position.x + momentum.x,
@@ -90,7 +90,7 @@ impl System {
         CollisionType::None
     }
 
-    pub fn new(config: crate::config::Config, canvas: Canvas<Window>) -> System {
+    pub fn new(config: crate::config::Config, canvas: Canvas<Window>, texture :  Result<sdl2::render::Texture<'_>, String>) -> System {
         // Create a vector of references to strings
         let mut blocks = vec![];
         for block in config.blocks {
@@ -113,7 +113,7 @@ impl System {
                 config.player.jump_speed,
                 rgb_to_color(config.player.color),
                 config.player.friction,
-                config.player.image,
+                texture
             ),
             screen_width: config.screen.w,
             screen_height: config.screen.h,

@@ -1,7 +1,7 @@
 use std::{env, process::Command};
 extern crate sdl2;
 
-use sdl2::event::Event;
+use sdl2::{event::Event, image::LoadTexture};
 use sdl2::keyboard::Keycode;
 use std::time::Duration;
 mod config;
@@ -27,8 +27,12 @@ pub fn main() -> Result<(), String> {
 
     let canvas: sdl2::render::Canvas<sdl2::video::Window> =
         window.into_canvas().build().map_err(|e| e.to_string())?;
+    
+        let texture_creator = canvas.texture_creator();
+        let texture: Result<sdl2::render::Texture<'_>, String> =
+            texture_creator.load_texture(config.player.image.clone());
 
-    let mut system = system::System::new(config, canvas);
+    let mut system = system::System::new(config, canvas, texture);
 
     let mut event_pump = sdl_context.event_pump()?;
     let mut held_down_keys = Keys {
