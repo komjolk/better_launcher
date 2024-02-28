@@ -52,5 +52,4 @@ Screen stores the data for the screen with w and h as width and height and color
 
 ## to do 
 * Add support for select like blocks
-* Add support for images for blocks
 * Make the camera follow the player

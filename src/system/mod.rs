@@ -1,15 +1,14 @@
 pub mod player;
 
 use player::{CollisionType, Player, Position};
-use sdl2::{pixels::Color, render::Canvas, video::Window};
+use sdl2::{ pixels::Color, render::Canvas, video::Window};
 mod block;
-use super::launch;
-use block::Block;
+pub use block::Block;
 pub(crate) struct System<'a> {
     pub player: Player<'a>,
     screen_width: u32,
     screen_height: u32,
-    pub blocks: Vec<Block>,
+    pub blocks: Vec<Block<'a>>,
     canvas: sdl2::render::Canvas<sdl2::video::Window>,
     color: Color,
 }
@@ -90,20 +89,10 @@ impl System<'_> {
         CollisionType::None
     }
 
-    pub fn new(config: crate::config::Config, canvas: Canvas<Window>, texture :  Result<sdl2::render::Texture<'_>, String>) -> System {
+    pub fn new<'a>(config: crate::config::Config, canvas: Canvas<Window>, texture :  Result<sdl2::render::Texture<'a>, String>, blocks : Vec<Block<'a>>) -> System<'a> {
         // Create a vector of references to strings
-        let mut blocks = vec![];
-        for block in config.blocks {
-            let block = Block::new(
-                block.x,
-                block.y,
-                block.w,
-                block.h,
-                rgb_to_color(block.color),
-                Some(Box::new(move || launch(Box::new(block.command.clone())))),
-            );
-            blocks.push(block);
-        }
+
+        
         System {
             player: Player::new(
                 config.player.x,
@@ -140,6 +129,6 @@ impl System<'_> {
     }
 }
 
-fn rgb_to_color(color: [u8; 3]) -> Color {
+pub fn rgb_to_color(color: [u8; 3]) -> Color {
     Color::RGB(color[0], color[1], color[2])
 }

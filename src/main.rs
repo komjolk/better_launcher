@@ -3,6 +3,7 @@ extern crate sdl2;
 
 use sdl2::{event::Event, image::LoadTexture};
 use sdl2::keyboard::Keycode;
+use system::rgb_to_color;
 use std::time::Duration;
 mod config;
 mod system;
@@ -31,8 +32,22 @@ pub fn main() -> Result<(), String> {
         let texture_creator = canvas.texture_creator();
         let texture: Result<sdl2::render::Texture<'_>, String> =
             texture_creator.load_texture(config.player.image.clone());
-
-    let mut system = system::System::new(config, canvas, texture);
+            let mut blocks = vec![];
+            for block in config.blocks.clone() {
+                let texture: Result<sdl2::render::Texture<'_>, String> =
+                    texture_creator.load_texture(block.image.clone());            
+                let block = system::Block::new(
+                    block.x,
+                    block.y,
+                    block.w,
+                    block.h,
+                    rgb_to_color(block.color),
+                    Some(Box::new(move || launch(Box::new(block.command.clone())))),
+                    texture
+                );
+                blocks.push(block);
+            }
+    let mut system = system::System::new(config, canvas, texture, blocks);
 
     let mut event_pump = sdl_context.event_pump()?;
     let mut held_down_keys = Keys {
