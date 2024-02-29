@@ -20,7 +20,8 @@ The config file is in JSON format with three objects:
             "command": [
                 "ls", "-A"
             ],
-            "color" : [0,0,255]
+            "color" : [0,0,255],
+            "image" : "block.png"
         }
     ],
     "player": {
@@ -44,7 +45,7 @@ The config file is in JSON format with three objects:
 ```
 
 
-Blocks stores all blocks in a list where x,y is the position of the top, and the right corner and h, w are height and width respectively. Command is a list of strings where the first string is the command to run and the rest are optional commands
+Blocks stores all blocks in a list where x,y is the position of the top, and the right corner and h, w are height and width respectively. Command is a list of strings where the first string is the command to run and the rest are optional commands.If color is wanted instead of image write a non existing image.
 
 Player is the moveable object where x,y is the start position of the top right corner. Speed is in acceleration where 1 is an acceleration of 1 pixel/s every 1/60th of a second same with gravity and jump_speed. If color is wanted instead of image write a non existing image.
 
