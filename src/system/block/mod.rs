@@ -9,8 +9,13 @@ pub struct Block<'a> {
     max_animation: f32,
     texture: Result<sdl2::render::Texture<'a>, String>,
 }
-impl Renderable for Block<'_>{
-    fn render(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) -> Result<(), String> {
+impl Renderable for Block<'_> {
+    fn render(
+        &self,
+        canvas: &mut sdl2::render::Canvas<sdl2::video::Window>,
+        screen_width: u32,
+        screen_x: i32,
+    ) -> Result<(), String> {
         let mut y = self.sprite.position.y as f32;
 
         if self.animation > 0.0 {
@@ -20,14 +25,17 @@ impl Renderable for Block<'_>{
                 y -= self.animation;
             }
         }
+        let x = self.sprite.position.x as i32 - screen_x;
 
-
+        if x + self.sprite.w < 0 || x > screen_width as i32 {
+            return Ok(());
+        }
         match &self.texture {
             Ok(texture) => canvas.copy(
                 &texture,
                 None,
                 sdl2::rect::Rect::new(
-                    self.sprite.position.x as i32,
+                    x as i32,
                     y as i32,
                     self.sprite.w as u32,
                     self.sprite.h as u32,
@@ -36,7 +44,7 @@ impl Renderable for Block<'_>{
             Err(_) => {
                 canvas.set_draw_color(self.sprite.color);
                 canvas.fill_rect(sdl2::rect::Rect::new(
-                    self.sprite.position.x as i32,
+                    x as i32,
                     y as i32,
                     self.sprite.w as u32,
                     self.sprite.h as u32,
@@ -55,7 +63,7 @@ impl Block<'_> {
         h: i32,
         color: Color,
         collision_fn: Option<Box<dyn Fn() -> ()>>,
-        texture : Result<sdl2::render::Texture<'_>, String>,
+        texture: Result<sdl2::render::Texture<'_>, String>,
     ) -> Block {
         let mut has_collsion_fn = false;
         let collision_fn = match collision_fn {
@@ -79,7 +87,7 @@ impl Block<'_> {
             animation: 0.0,
             has_collsion_fn,
             max_animation: 50.0,
-            texture
+            texture,
         }
     }
 

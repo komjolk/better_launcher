@@ -1,7 +1,7 @@
 pub mod player;
 
 use player::{CollisionType, Player, Position};
-use sdl2::{ pixels::Color, render::Canvas, video::Window};
+use sdl2::{pixels::Color, render::Canvas, video::Window};
 mod block;
 pub use block::Block;
 pub(crate) struct System<'a> {
@@ -11,6 +11,7 @@ pub(crate) struct System<'a> {
     pub blocks: Vec<Block<'a>>,
     canvas: sdl2::render::Canvas<sdl2::video::Window>,
     color: Color,
+    screen_x: i32,
 }
 
 #[derive(Copy, Clone)]
@@ -21,7 +22,12 @@ pub struct Sprite {
     pub color: Color,
 }
 pub trait Renderable {
-    fn render(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) -> Result<(), String>;
+    fn render(
+        &self,
+        canvas: &mut sdl2::render::Canvas<sdl2::video::Window>,
+        screen_width: u32,
+        screen_x: i32,
+    ) -> Result<(), String>;
 }
 
 impl System<'_> {
@@ -89,10 +95,14 @@ impl System<'_> {
         CollisionType::None
     }
 
-    pub fn new<'a>(config: crate::config::Config, canvas: Canvas<Window>, texture :  Result<sdl2::render::Texture<'a>, String>, blocks : Vec<Block<'a>>) -> System<'a> {
+    pub fn new<'a>(
+        config: crate::config::Config,
+        canvas: Canvas<Window>,
+        texture: Result<sdl2::render::Texture<'a>, String>,
+        blocks: Vec<Block<'a>>,
+    ) -> System<'a> {
         // Create a vector of references to strings
 
-        
         System {
             player: Player::new(
                 config.player.x,
@@ -102,13 +112,14 @@ impl System<'_> {
                 config.player.jump_speed,
                 rgb_to_color(config.player.color),
                 config.player.friction,
-                texture
+                texture,
             ),
             screen_width: config.screen.w,
             screen_height: config.screen.h,
             blocks,
             canvas,
             color: rgb_to_color(config.screen.color),
+            screen_x: 0,
         }
     }
     pub fn update(&mut self) {
@@ -119,10 +130,15 @@ impl System<'_> {
         for block in self.blocks.iter_mut() {
             block.update();
         }
+        self.screen_x = self.player.sprite.position.x as i32 - self.screen_width as i32 / 2;
 
-        self.player.render(&mut self.canvas).expect("RENDER_ERR");
+        self.player
+            .render(&mut self.canvas, self.screen_width, self.screen_x)
+            .expect("RENDER_ERR");
         for block in &self.blocks {
-            block.render(&mut self.canvas).expect("RENDER_ERR");
+            block
+                .render(&mut self.canvas, self.screen_width, self.screen_x)
+                .expect("RENDER_ERR");
         }
         self.canvas.set_draw_color(self.color);
         self.canvas.present();

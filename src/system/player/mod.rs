@@ -9,7 +9,7 @@ pub struct Player<'a> {
     jump_speed: f32,
     can_jump: bool,
     friction: f32,
-    texture:  Result<sdl2::render::Texture<'a>, String>,
+    texture: Result<sdl2::render::Texture<'a>, String>,
 }
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct Position {
@@ -25,7 +25,7 @@ impl Player<'_> {
         jump_speed: f32,
         color: Color,
         friction: f32,
-        texture:  Result<sdl2::render::Texture, String>,
+        texture: Result<sdl2::render::Texture, String>,
     ) -> Player {
         Player {
             sprite: Sprite {
@@ -99,15 +99,20 @@ impl Player<'_> {
 }
 
 impl Renderable for Player<'_> {
-    fn render(&self, canvas: &mut sdl2::render::Canvas<sdl2::video::Window>) -> Result<(), String> {
-
+    fn render(
+        &self,
+        canvas: &mut sdl2::render::Canvas<sdl2::video::Window>,
+        _screen_width: u32,
+        screen_x: i32,
+    ) -> Result<(), String> {
+        let x = self.sprite.position.x as i32 - screen_x;
 
         match &self.texture {
             Ok(texture) => canvas.copy(
                 &texture,
                 None,
                 sdl2::rect::Rect::new(
-                    self.sprite.position.x as i32,
+                    x as i32,
                     self.sprite.position.y as i32,
                     self.sprite.w as u32,
                     self.sprite.h as u32,
@@ -116,7 +121,7 @@ impl Renderable for Player<'_> {
             Err(_) => {
                 canvas.set_draw_color(self.sprite.color);
                 canvas.fill_rect(sdl2::rect::Rect::new(
-                    self.sprite.position.x as i32,
+                    x as i32,
                     self.sprite.position.y as i32,
                     self.sprite.w as u32,
                     self.sprite.h as u32,
