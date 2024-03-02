@@ -130,12 +130,6 @@ impl System<'_> {
         for block in self.blocks.iter_mut() {
             block.update();
         }
-        println!(
-            "{}, {}, {}",
-            self.player.sprite.position.x,
-            self.screen_width / 2,
-            self.screen_x
-        );
         if self.player.sprite.position.x as i32 > self.screen_x + self.screen_width as i32 / 2 + 50
         {
             self.screen_x =
