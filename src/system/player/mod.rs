@@ -72,17 +72,13 @@ impl Player<'_> {
         self.momentum.y += self.gravity;
 
         // friction could be counted as gravity
-        // could actually be multipled by the momentum
-        if self.momentum.x > 0.0 && self.momentum.x - self.friction  * self.momentum.x > 0.0 {
-            self.momentum.x -= self.friction * self.momentum.x;
-        } else if self.momentum.x > 0.0 {
-            self.momentum.x = 0.0;
-        } else if self.momentum.x < 0.0 && self.momentum.x + self.friction * self.momentum.x < 0.0 {
-            self.momentum.x += self.friction * self.momentum.x * -1.0;
-        } else if self.momentum.x < 0.0 {
-            self.momentum.x = 0.0;
-        }
-        println!("momentum: {:?}", self.momentum);
+
+        // not the most physical correct way to do this
+        self.momentum.x *= self.friction;
+       if self.momentum.x.abs() < 0.1 {
+           self.momentum.x = 0.0;
+       }
+       println!("{:?}", self.momentum.x);
     }
     pub fn move_player(&mut self, direction: Direction) {
         match direction {
