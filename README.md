@@ -33,7 +33,7 @@ The config file is in JSON format with three objects:
         "jump_speed": 10,
         "gravity": 0.3,
         "color": [255,0,0],
-        "friction": 0.2,
+        "friction": 0.8,
         "image": "player.png"
     },
     "screen": {
