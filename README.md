@@ -33,7 +33,7 @@ The config file is in JSON format with three objects:
         "jump_speed": 10,
         "gravity": 0.3,
         "color": [255,0,0],
-        "friction": 1,
+        "friction": 0.2,
         "image": "player.png"
     },
     "screen": {
@@ -47,7 +47,7 @@ The config file is in JSON format with three objects:
 
 Blocks stores all blocks in a list where x,y is the position of the top, and the right corner and h, w are height and width respectively. Command is a list of strings where the first string is the command to run and the rest are optional commands.If color is wanted instead of image write a non existing image.
 
-Player is the moveable object where x,y is the start position of the top right corner. Speed is in acceleration where 1 is an acceleration of 1 pixel/s every 1/60th of a second same with gravity and jump_speed. If color is wanted instead of image write a non existing image.
+Player is the moveable object where x,y is the start position of the top right corner. Speed is in acceleration where 1 is an acceleration of 1 pixel/s every 1/60th of a second same with gravity and jump_speed. Every update friction * momentum is subtracted from momementum; If color is wanted instead of image write a non existing image.
 
 Screen stores the data for the screen with w and h as width and height and color being the background color in rgb
 
