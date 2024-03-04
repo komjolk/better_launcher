@@ -126,6 +126,43 @@ pub fn main() -> Result<(), String> {
                 } => {
                     held_down_keys.space = false;
                 }
+                Event::KeyDown {
+                    keycode: Some(Keycode::Right),
+                    ..
+                } => {
+                    held_down_keys.right = true;
+                }
+                Event::KeyUp {
+                    keycode: Some(Keycode::Right),
+                    ..
+                } => {
+                    held_down_keys.right = false;
+                }
+                Event::KeyDown {
+                    keycode: Some(Keycode::Left),
+                    ..
+                } => {
+                    held_down_keys.left = true;
+                }
+                Event::KeyUp {
+                    keycode: Some(Keycode::Left),
+                    ..
+                } => {
+                    held_down_keys.left = false;
+                }
+                Event::KeyDown {
+                    keycode: Some(Keycode::Up),
+                    ..
+                } => {
+                    held_down_keys.up = true;
+                } 
+                Event::KeyUp {
+                    keycode: Some(Keycode::Up),
+                    ..
+                } => {
+                    held_down_keys.up = false;
+                }
+
 
                 _ => {}
             }
