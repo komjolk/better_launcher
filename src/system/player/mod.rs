@@ -78,7 +78,6 @@ impl Player<'_> {
        if self.momentum.x.abs() < 0.1 {
            self.momentum.x = 0.0;
        }
-       println!("{:?}", self.momentum.x);
     }
     pub fn move_player(&mut self, direction: Direction) {
         match direction {
@@ -147,10 +146,15 @@ pub enum CollisionType {
     Solid(Position),
     None,
 }
+#[derive(Debug)]
 pub struct Keys {
-    pub up: bool,
-    pub down: bool,
-    pub left: bool,
-    pub right: bool,
+    pub w: bool,
+    pub s: bool,
+    pub a: bool,
+    pub d: bool,
+    pub right_arrow: bool,
+    pub left_arrow: bool,
+    pub up_arrow: bool,
+    pub down_arrow: bool,
     pub space: bool,
 }

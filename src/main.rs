@@ -51,10 +51,14 @@ pub fn main() -> Result<(), String> {
 
     let mut event_pump = sdl_context.event_pump()?;
     let mut held_down_keys = Keys {
-        up: false,
-        down: false,
-        left: false,
-        right: false,
+        w: false,
+        a: false,
+        s: false,
+        d: false,
+        right_arrow : false,
+        left_arrow : false,
+        up_arrow : false,
+        down_arrow : false,
         space: false,
     };
 
@@ -70,49 +74,49 @@ pub fn main() -> Result<(), String> {
                     keycode: Some(Keycode::W),
                     ..
                 } => {
-                    held_down_keys.up = true;
+                    held_down_keys.w = true;
                 }
                 Event::KeyUp {
                     keycode: Some(Keycode::W),
                     ..
                 } => {
-                    held_down_keys.up = false;
+                    held_down_keys.w = false;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::S),
                     ..
                 } => {
-                    held_down_keys.down = true;
+                    held_down_keys.s = true;
                 }
                 Event::KeyUp {
                     keycode: Some(Keycode::S),
                     ..
                 } => {
-                    held_down_keys.down = false;
+                    held_down_keys.s = false;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::A),
                     ..
                 } => {
-                    held_down_keys.left = true;
+                    held_down_keys.a = true;
                 }
                 Event::KeyUp {
                     keycode: Some(Keycode::A),
                     ..
                 } => {
-                    held_down_keys.left = false;
+                    held_down_keys.a = false;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::D),
                     ..
                 } => {
-                    held_down_keys.right = true;
+                    held_down_keys.d = true;
                 }
                 Event::KeyUp {
                     keycode: Some(Keycode::D),
                     ..
                 } => {
-                    held_down_keys.right = false;
+                    held_down_keys.d = false;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Space),
@@ -130,37 +134,37 @@ pub fn main() -> Result<(), String> {
                     keycode: Some(Keycode::Right),
                     ..
                 } => {
-                    held_down_keys.right = true;
+                    held_down_keys.right_arrow = true;
                 }
                 Event::KeyUp {
                     keycode: Some(Keycode::Right),
                     ..
                 } => {
-                    held_down_keys.right = false;
+                    held_down_keys.right_arrow = false;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Left),
                     ..
                 } => {
-                    held_down_keys.left = true;
+                    held_down_keys.left_arrow = true;
                 }
                 Event::KeyUp {
                     keycode: Some(Keycode::Left),
                     ..
                 } => {
-                    held_down_keys.left = false;
+                    held_down_keys.left_arrow = false;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Up),
                     ..
                 } => {
-                    held_down_keys.up = true;
+                    held_down_keys.up_arrow = true;
                 } 
                 Event::KeyUp {
                     keycode: Some(Keycode::Up),
                     ..
                 } => {
-                    held_down_keys.up = false;
+                    held_down_keys.up_arrow = false;
                 }
 
 
@@ -168,21 +172,19 @@ pub fn main() -> Result<(), String> {
             }
         }
 
-        if held_down_keys.up {
+        if held_down_keys.w || held_down_keys.up_arrow ||held_down_keys.space{
             system.player.move_player(Direction::Up);
         }
-        if held_down_keys.down {
+        if held_down_keys.s || held_down_keys.down_arrow{
             system.player.move_player(Direction::Down);
         }
-        if held_down_keys.left {
+        if held_down_keys.a || held_down_keys.left_arrow{
             system.player.move_player(Direction::Left);
         }
-        if held_down_keys.right {
+        if held_down_keys.d || held_down_keys.right_arrow{
             system.player.move_player(Direction::Right);
         }
-        if held_down_keys.space {
-            system.player.move_player(Direction::Up);
-        }
+
         system.update();
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
         // The rest of the game loop goes here...
