@@ -3,7 +3,9 @@ pub mod player;
 use player::{CollisionType, Player, Position};
 use sdl2::{pixels::Color, render::Canvas, video::Window};
 mod block;
+mod key_logger;
 pub use block::Block;
+
 pub(crate) struct System<'a> {
     pub player: Player<'a>,
     screen_width: u32,
@@ -12,6 +14,7 @@ pub(crate) struct System<'a> {
     canvas: sdl2::render::Canvas<sdl2::video::Window>,
     color: Color,
     screen_x: i32,
+    key_logger: key_logger::Keys,
 }
 
 #[derive(Copy, Clone)]
@@ -120,10 +123,17 @@ impl System<'_> {
             canvas,
             color: rgb_to_color(config.screen.color),
             screen_x: 0,
+            key_logger: key_logger::Keys::new()
         }
     }
-    pub fn update(&mut self) {
+    pub fn update(&mut self, event_pump: &mut sdl2::EventPump) -> Result<(), String>{
         self.canvas.clear();
+
+        match self.key_logger.update(event_pump, &mut self.player){
+            Ok(()) => (),
+            Err(e) => return Err(e),
+        };
+        println!("{:?}", self.key_logger);
         self.player.gravity();
         let collision_type = self.check_collision(self.player.sprite, self.player.momentum);
         self.player.collision(collision_type);
@@ -151,6 +161,7 @@ impl System<'_> {
         }
         self.canvas.set_draw_color(self.color);
         self.canvas.present();
+        Ok(())
     }
 }
 

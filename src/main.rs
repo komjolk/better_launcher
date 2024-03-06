@@ -1,14 +1,12 @@
 use std::{env, process::Command};
 extern crate sdl2;
 
-use sdl2::keyboard::Keycode;
-use sdl2::{event::Event, image::LoadTexture};
+use sdl2::{event::Event, image::LoadTexture, keyboard::Keycode};
 use std::time::Duration;
 use system::rgb_to_color;
 mod config;
 mod system;
 use crate::config::read_config;
-use system::player::{Direction, Keys};
 
 pub fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().collect();
@@ -50,147 +48,15 @@ pub fn main() -> Result<(), String> {
     let mut system = system::System::new(config, canvas, texture, blocks);
 
     let mut event_pump = sdl_context.event_pump()?;
-    let mut held_down_keys = Keys {
-        w: false,
-        a: false,
-        s: false,
-        d: false,
-        right_arrow : false,
-        left_arrow : false,
-        up_arrow : false,
-        down_arrow : false,
-        space: false,
-    };
-
     'running: loop {
-        for event in event_pump.poll_iter() {
-            match event {
-                Event::Quit { .. }
-                | Event::KeyDown {
-                    keycode: Some(Keycode::Escape),
-                    ..
-                } => break 'running,
-                Event::KeyDown {
-                    keycode: Some(Keycode::W),
-                    ..
-                } => {
-                    held_down_keys.w = true;
-                }
-                Event::KeyUp {
-                    keycode: Some(Keycode::W),
-                    ..
-                } => {
-                    held_down_keys.w = false;
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::S),
-                    ..
-                } => {
-                    held_down_keys.s = true;
-                }
-                Event::KeyUp {
-                    keycode: Some(Keycode::S),
-                    ..
-                } => {
-                    held_down_keys.s = false;
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::A),
-                    ..
-                } => {
-                    held_down_keys.a = true;
-                }
-                Event::KeyUp {
-                    keycode: Some(Keycode::A),
-                    ..
-                } => {
-                    held_down_keys.a = false;
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::D),
-                    ..
-                } => {
-                    held_down_keys.d = true;
-                }
-                Event::KeyUp {
-                    keycode: Some(Keycode::D),
-                    ..
-                } => {
-                    held_down_keys.d = false;
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Space),
-                    ..
-                } => {
-                    held_down_keys.space = true;
-                }
-                Event::KeyUp {
-                    keycode: Some(Keycode::Space),
-                    ..
-                } => {
-                    held_down_keys.space = false;
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Right),
-                    ..
-                } => {
-                    held_down_keys.right_arrow = true;
-                }
-                Event::KeyUp {
-                    keycode: Some(Keycode::Right),
-                    ..
-                } => {
-                    held_down_keys.right_arrow = false;
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Left),
-                    ..
-                } => {
-                    held_down_keys.left_arrow = true;
-                }
-                Event::KeyUp {
-                    keycode: Some(Keycode::Left),
-                    ..
-                } => {
-                    held_down_keys.left_arrow = false;
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Up),
-                    ..
-                } => {
-                    held_down_keys.up_arrow = true;
-                } 
-                Event::KeyUp {
-                    keycode: Some(Keycode::Up),
-                    ..
-                } => {
-                    held_down_keys.up_arrow = false;
-                }
-
-
-                _ => {}
-            }
-        }
-
-        if held_down_keys.w || held_down_keys.up_arrow ||held_down_keys.space{
-            system.player.move_player(Direction::Up);
-        }
-        if held_down_keys.s || held_down_keys.down_arrow{
-            system.player.move_player(Direction::Down);
-        }
-        if held_down_keys.a || held_down_keys.left_arrow{
-            system.player.move_player(Direction::Left);
-        }
-        if held_down_keys.d || held_down_keys.right_arrow{
-            system.player.move_player(Direction::Right);
-        }
-
-        system.update();
+        match system.update(&mut event_pump){
+            Ok(()) => (),
+            Err(e) => break 'running
+        }; 
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
-        // The rest of the game loop goes here...
-    }
-
+    } 
     Ok(())
+
 }
 fn launch(args: Box<Vec<String>>) {
     if args.len() == 0 {

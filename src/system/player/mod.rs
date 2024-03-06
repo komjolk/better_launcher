@@ -1,6 +1,5 @@
 use super::{Renderable, Sprite};
 use sdl2::pixels::Color;
-
 pub struct Player<'a> {
     pub momentum: Position,
     pub sprite: Sprite,
@@ -145,16 +144,4 @@ pub enum Direction {
 pub enum CollisionType {
     Solid(Position),
     None,
-}
-#[derive(Debug)]
-pub struct Keys {
-    pub w: bool,
-    pub s: bool,
-    pub a: bool,
-    pub d: bool,
-    pub right_arrow: bool,
-    pub left_arrow: bool,
-    pub up_arrow: bool,
-    pub down_arrow: bool,
-    pub space: bool,
 }
