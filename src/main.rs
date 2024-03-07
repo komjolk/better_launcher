@@ -1,7 +1,7 @@
 use std::{env, process::Command};
 extern crate sdl2;
 
-use sdl2::{event::Event, image::LoadTexture, keyboard::Keycode};
+use sdl2::image::LoadTexture;
 use std::time::Duration;
 use system::rgb_to_color;
 mod config;
@@ -49,14 +49,16 @@ pub fn main() -> Result<(), String> {
 
     let mut event_pump = sdl_context.event_pump()?;
     'running: loop {
-        match system.update(&mut event_pump){
+        match system.update(&mut event_pump) {
             Ok(()) => (),
-            Err(e) => break 'running
-        }; 
+            Err(e) => {
+                println!("{}", e);
+                break 'running;
+            }
+        };
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
-    } 
+    }
     Ok(())
-
 }
 fn launch(args: Box<Vec<String>>) {
     if args.len() == 0 {

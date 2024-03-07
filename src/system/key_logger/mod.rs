@@ -32,7 +32,6 @@ impl Keys {
     }
     pub fn update(&mut self, event_pump: &mut sdl2::EventPump, player: &mut Player) -> Result<(), String>{
     for event in event_pump.poll_iter() {
-        println!("{:?}", event);
         match event {
             Event::Quit { .. }
                     | Event::KeyDown {

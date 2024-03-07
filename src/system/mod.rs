@@ -133,7 +133,6 @@ impl System<'_> {
             Ok(()) => (),
             Err(e) => return Err(e),
         };
-        println!("{:?}", self.key_logger);
         self.player.gravity();
         let collision_type = self.check_collision(self.player.sprite, self.player.momentum);
         self.player.collision(collision_type);
