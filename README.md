@@ -55,3 +55,4 @@ Screen stores the data for the screen with w and h as width and height and color
 * Add support for select like blocks
 * Tweak deafualt config file for more smooth movement
 * Add background 
+* Add unit testing
