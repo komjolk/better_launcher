@@ -29,7 +29,7 @@ The config file is in JSON format with three objects:
         "y": 900,
         "w": 100,
         "h": 100,
-        "speed": 5,
+        "speed": 3,
         "jump_speed": 10,
         "gravity": 0.3,
         "color": [255,0,0],
