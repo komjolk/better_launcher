@@ -53,6 +53,6 @@ Screen stores the data for the screen with w and h as width and height and color
 
 ## to do 
 * Add support for select like blocks
-* Fix so animation doesn't reset if hitting the block again
+* Make animation configurable
 * Add background 
 * Add unit testing
