@@ -98,7 +98,7 @@ impl Block<'_> {
     }
 
     pub fn collision(&mut self) {
-        if self.has_collsion_fn {
+        if self.has_collsion_fn && self.animation == 0.0{
             self.animation = self.max_animation;
             (self.collision_fn)();
         }
