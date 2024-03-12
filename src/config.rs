@@ -15,6 +15,7 @@ pub struct BlockConfig {
     pub command: Vec<String>,
     pub color: [u8; 3],
     pub image: String,
+    pub animation : f32,
 }
 #[derive(serde::Deserialize, Debug)]
 pub struct PlayerConfig {

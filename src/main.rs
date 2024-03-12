@@ -41,6 +41,7 @@ pub fn main() -> Result<(), String> {
             block.h,
             rgb_to_color(block.color),
             Some(Box::new(move || launch(Box::new(block.command.clone())))),
+            block.animation,
             texture,
         );
         blocks.push(block);

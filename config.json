@@ -9,7 +9,8 @@
                 "ls", "-A"
             ],
             "color" : [0,0,255],
-            "image": "block.png"
+            "image": "block.png",
+            "animation" : 50
         }
     ],
     "player": {

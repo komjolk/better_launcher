@@ -63,6 +63,7 @@ impl Block<'_> {
         h: i32,
         color: Color,
         collision_fn: Option<Box<dyn Fn() -> ()>>,
+        animation: f32,
         texture: Result<sdl2::render::Texture<'_>, String>,
     ) -> Block {
         let mut has_collsion_fn = false;
@@ -86,7 +87,7 @@ impl Block<'_> {
             collision_fn,
             animation: 0.0,
             has_collsion_fn,
-            max_animation: 50.0,
+            max_animation: animation,
             texture,
         }
     }
