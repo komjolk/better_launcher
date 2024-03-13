@@ -21,7 +21,8 @@ The config file is in JSON format with three objects:
                 "ls", "-A"
             ],
             "color" : [0,0,255],
-            "image" : "block.png"
+            "image" : "block.png",
+            "animation" : 50
         }
     ],
     "player": {
@@ -53,6 +54,5 @@ Screen stores the data for the screen with w and h as width and height and color
 
 ## to do 
 * Add support for select like blocks
-* Make animation configurable
 * Add background 
 * Add unit testing
