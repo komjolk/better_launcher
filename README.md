@@ -53,5 +53,4 @@ Player is the moveable object where x,y is the start position of the top right c
 Screen stores the data for the screen with w and h as width and height and color being the background color in rgb
 
 ## to do 
-* Add unit testing
 * Add support for player walking animation
