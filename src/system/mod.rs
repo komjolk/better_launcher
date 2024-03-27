@@ -149,6 +149,9 @@ impl System<'_> {
             self.screen_x =
                 self.player.sprite.position.x as i32 - self.screen_width as i32 / 2 + 50;
         }
+        if self.screen_x < 0{
+            self.screen_x = 0;
+        }
 
         self.player
             .render(&mut self.canvas, self.screen_width, self.screen_x)
